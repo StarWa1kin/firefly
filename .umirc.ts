@@ -18,4 +18,10 @@ export default defineConfig({
           include: ["./src/mock/index.ts"],
         }
       : false,
+
+  // history
+  base: "/firefly/",
+  publicPath: "/firefly/",
+  //hash
+  // publicPath: "./",
 });
