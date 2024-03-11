@@ -2,6 +2,8 @@ import useEchart from "@/hooks/useEchart";
 import { Card, Space, Table, TableProps, Tag } from "antd";
 import Topology from "./components/Topology";
 import { useNavigate } from "umi";
+import { useEffect } from "react";
+import NetWorkApi from "@/services/networks";
 
 interface DataType {
   key: string;
@@ -67,6 +69,15 @@ export default function SubnetPage() {
       dgroup: "",
     },
   ];
+
+  const getTopology = async () => {
+    const res = await NetWorkApi.FETCH_TOPOLOGY();
+    debugger;
+  };
+
+  useEffect(() => {
+    getTopology();
+  }, []);
 
   return (
     <div className="flex">

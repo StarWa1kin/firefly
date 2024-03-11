@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Form, Input, InputNumber, Popconfirm, Select, Switch, Table, TableColumnType, Tag, Typography } from "antd";
+import DevicesApi from "@/services/devices";
 
 interface Item {
   key: string;
@@ -171,6 +172,15 @@ const ConfigPage: React.FC = () => {
       }),
     };
   });
+
+  // 查询所有设备
+  const getAllDevices = async () => {
+    const res = await DevicesApi.FETCH_ALL_DEVICES();
+  };
+
+  useEffect(() => {
+    getAllDevices();
+  }, []);
 
   return (
     <Form form={form} component={false}>

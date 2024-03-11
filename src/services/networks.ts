@@ -1,8 +1,8 @@
 import { GET, POST } from "@/utils/request";
 
 // 获取网络拓扑信息。 V1
-export function FETCH_NETWORKS() {
-  return POST(`/Networks/topology`);
+export function FETCH_TOPOLOGY() {
+  return GET(`/Networks/topology`);
 }
 
 // 获取协议和相关设备信息。 V1
@@ -62,7 +62,7 @@ export function FETCH_TOP_LOCKS_DIRECTIONAL() {
 
 // TOTAL 4->10->12
 const NetWorkApi = {
-  FETCH_NETWORKS,
+  FETCH_TOPOLOGY,
   FETCH_PROTOCOLS,
   FETCH_THROUGHPUT,
   FETCH_LOCK_THROUGHPUT,
