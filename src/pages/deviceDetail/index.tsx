@@ -81,6 +81,7 @@ export default function DevicesPage() {
 
         <Card title="" className="mt-[16px]">
           <Segmented<string> options={["list", "graph"]} onChange={(value) => setActiveTab(value)} value={activeTab} />
+          <p>incoming and outhoing throughput.</p>
           <div className="mt-[16px]">{activeTab === "list" ? <Table columns={columns} dataSource={data} pagination={false} /> : <Line></Line>}</div>
         </Card>
       </div>
