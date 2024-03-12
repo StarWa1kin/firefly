@@ -1,8 +1,8 @@
 import useEchart from "@/hooks/useEchart";
-import { Card, Space, Table, TableProps, Tag } from "antd";
+import { Button, Card, Input, Modal, Space, Table, TableProps, Tag } from "antd";
 import Topology from "./components/Topology";
 import { useNavigate } from "umi";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import NetWorkApi from "@/services/networks";
 
 interface DataType {
@@ -15,6 +15,9 @@ interface DataType {
 }
 export default function SubnetPage() {
   const navigate = useNavigate();
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [deviceName, setDeviceName] = useState("");
 
   const columns: TableProps<DataType>["columns"] = [
     {
@@ -75,14 +78,24 @@ export default function SubnetPage() {
     debugger;
   };
 
+  const handleOk = () => {
+    console.log(deviceName);
+    setIsModalOpen(false);
+    setDeviceName("");
+  };
+
+  const handleCancel = () => {
+    setIsModalOpen(false);
+    setDeviceName("");
+  };
+
   useEffect(() => {
     getTopology();
   }, []);
 
   return (
     <div className="flex">
-      <Card title="Tosibox Network" style={{ width: "50%", marginRight: 16 }}>
-        {/* <div style={{ width: "100%", height: 600 }} ref={domRef}></div> */}
+      <Card title="Tosibox Network" style={{ width: "50%", marginRight: 16 }} extra={<Button onClick={() => setIsModalOpen(true)}>Edit Subnet Name</Button>}>
         <div className="h-[600px]">
           <Topology></Topology>
         </div>
@@ -95,6 +108,10 @@ export default function SubnetPage() {
           <Table columns={columns} dataSource={data} />
         </Card>
       </div>
+
+      <Modal title="Edit Modal" open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
+        <Input placeholder="Please Input New Subnet Name " value={deviceName} onInput={(e: any) => setDeviceName(e.target.value)} />
+      </Modal>
     </div>
   );
 }

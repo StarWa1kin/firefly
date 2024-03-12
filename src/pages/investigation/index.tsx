@@ -188,15 +188,17 @@ export default function InvestigationPage() {
         <div className="mt-[16px]">
           {(activeTab === "events" && (
             <div>
+              <p>{`${activeTab} Graph`}</p>
               <NetFlowGraph></NetFlowGraph>
-              <Card>
+              <Card title={`${activeTab} Table`}>
                 <Table className="mt-5" columns={columns} dataSource={data}></Table>
               </Card>
             </div>
           )) || (
             <div>
+              <p>{`${activeTab} Graph`}</p>
               <NetFlowGraph></NetFlowGraph>
-              <Card>
+              <Card title={`${activeTab} Table`}>
                 <Table columns={moreColumns} dataSource={dataTwo}></Table>
               </Card>
             </div>
