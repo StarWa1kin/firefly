@@ -5,7 +5,6 @@ export default defineConfig({
     { path: "/", redirect: "/dashboard" },
     { path: "/config", component: "config" },
     { path: "/dashboard", component: "dashboard" },
-    { path: "/devices", component: "devices" },
     { path: "/investigation", component: "investigation" },
     { path: "/subnet", component: "subnet" },
     { path: "/device-detail", component: "deviceDetail" },
