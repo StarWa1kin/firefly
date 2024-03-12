@@ -3,6 +3,7 @@ import { Badge, Button, Card, Form, Input, Segmented, Table, TableProps, DatePic
 import { useForm } from "antd/es/form/Form";
 import { useEffect, useState } from "react";
 import NetFlowGraph from "./components/NetFlowGraph";
+import QuickWinsApi from "@/services/quickWins";
 const { RangePicker } = DatePicker;
 
 const data = [
@@ -95,7 +96,7 @@ export default function InvestigationPage() {
       dataIndex: "Date",
       key: "Date",
       align: "center",
-    }, 
+    },
     {
       title: "IP Src",
       dataIndex: "IP_Src",
@@ -140,6 +141,30 @@ export default function InvestigationPage() {
     },
   ];
 
+  const onSearch = () => {
+    const searchData = form.getFieldsValue();
+    const { datetime, ...rest } = searchData;
+    const start = datetime[0];
+    const end = datetime[1];
+    const query = { start, end, ...rest };
+    console.log(query);
+  };
+
+  const getEventsData = async () => {
+    const res = await QuickWinsApi.DASHBOARD_GRAPHS({});
+    console.log(res);
+  };
+
+  const getNetFlowData = async () => {};
+
+  useEffect(() => {
+    if (activeTab === "events") {
+      getEventsData();
+    } else {
+      getNetFlowData();
+    }
+  }, [activeTab]);
+
   return (
     <div>
       <Segmented<string> options={["events", "net flows"]} onChange={(value) => setActiveTab(value)} value={activeTab} />
@@ -147,14 +172,16 @@ export default function InvestigationPage() {
       <div className="mt-[16px]">
         <div className="search-bar">
           <Form layout="inline" form={form}>
-            <Form.Item label="IP">
+            <Form.Item label="IP" name="ip">
               <Input placeholder="IP address" />
             </Form.Item>
-            <Form.Item>
-              <RangePicker showTime />
+            <Form.Item name="datetime">
+              <RangePicker showTime format={["YYYY-MM-DD HH:mm:ss", "YYYY-MM-DD HH:mm:ss"]} />
             </Form.Item>
             <Form.Item>
-              <Button type="primary">Search</Button>
+              <Button type="primary" onClick={onSearch}>
+                Search
+              </Button>
             </Form.Item>
           </Form>
         </div>
@@ -162,16 +189,16 @@ export default function InvestigationPage() {
           {(activeTab === "events" && (
             <div>
               <NetFlowGraph></NetFlowGraph>
-            <Card>
-              <Table className="mt-5" columns={columns} dataSource={data}></Table>
-            </Card>
+              <Card>
+                <Table className="mt-5" columns={columns} dataSource={data}></Table>
+              </Card>
             </div>
           )) || (
             <div>
               <NetFlowGraph></NetFlowGraph>
-                <Card>
-                  <Table columns={moreColumns} dataSource={dataTwo}></Table>
-                </Card>
+              <Card>
+                <Table columns={moreColumns} dataSource={dataTwo}></Table>
+              </Card>
             </div>
           )}
         </div>

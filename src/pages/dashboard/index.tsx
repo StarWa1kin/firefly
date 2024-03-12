@@ -7,13 +7,14 @@ import TopTenLocksThroughput, { DashboardAddNewTTLDataSource } from "./component
 import PriorityCountBar from "./components/PriorityCountBar";
 
 import { useNavigate } from "umi";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 import AlertApi from "@/services/alerts";
 import DevicesApi from "@/services/devices";
 
 import axios from "axios";
 import RecentSecurityEvents from "./components/RecentSecurityEvents";
+import NetWorkApi from "@/services/networks";
 
 interface DataType {
   key: string;
@@ -27,6 +28,8 @@ interface DataType {
 export default function DashboardPage() {
   const navigate = useNavigate();
   const [form] = Form.useForm();
+
+  const [priorityCountChartData, setPriorityCountChartData] = useState<any[]>([]);
 
   const columns: TableProps<DataType>["columns"] = [
     {
@@ -101,12 +104,10 @@ export default function DashboardPage() {
   const formatter = (value: number) => <CountUp end={value} separator="," />;
 
   const getAllAlerts = async () => {
-    console.log("AllAlerts is running");
     const res = await AlertApi.FETCH_ALL_ALERTS();
-    console.log(res);
+    console.log(res, "getAllAlerts");
     // const bes = await axios.get("http://localhost:5263/api/Alerts/fetch-alerts-alls");
     // console.log(bes);
-
   };
 
   const doAThing = async () => {
@@ -115,13 +116,37 @@ export default function DashboardPage() {
 
   const getAllDevices = async () => {
     const res = await DevicesApi.FETCH_ALL_DEVICES();
-    console.log(res);
+    console.log(res, "getAllDevices");
   };
+
+  const getAlertCount = async () => {
+    const res = await AlertApi.FETCH_ALERTS_COUNT();
+    console.log("Security Events by Priority", res);
+    if (res.length) {
+      const data = res.map((item) => ({ name: item.priorty, value: item.count }));
+      setPriorityCountChartData(data);
+    }
+  };
+
+  const getLockThroughout = async () => {
+    const res = await NetWorkApi.FETCH_LOCK_THROUGHPUT();
+    console.log(res, "getLockThroughout");
+  };
+
+  const getTopTalkerDevices = async () => {
+    const res = await NetWorkApi.FETCH_TOP_TALKER_DEVICES();
+    console.log(res, "getTopTalkerDevices");
+  };
+
+  const onSearch = () => {};
 
   useEffect(() => {
     doAThing();
     getAllAlerts();
-    console.log("Attempting to get all alerts")
+    getAlertCount();
+    getAllDevices();
+    getLockThroughout();
+    getTopTalkerDevices();
   }, []);
 
   return (
@@ -138,18 +163,20 @@ export default function DashboardPage() {
             <DatePicker />
           </Form.Item>
           <Form.Item>
-            <Button type="primary">Search</Button>
+            <Button type="primary" onClick={onSearch}>
+              Search
+            </Button>
           </Form.Item>
         </Form>
       </div>
       <div className="mt-[16px] flex justify-between flex-wrap">
         <Card title="Security Events by Priority " style={{ width: "49%", marginBottom: 32 }}>
           <div className="h-[400px]">
-            <PriorityCountBar />
+            <PriorityCountBar echartData={priorityCountChartData} />
           </div>
         </Card>
 
-        <Card title="Locks by Throughput " style={{ width: "49%", marginBottom: 32 }}>
+        <Card title="Locks by Throughput" style={{ width: "49%", marginBottom: 32 }}>
           <TopTenLocksThroughput />
         </Card>
 
