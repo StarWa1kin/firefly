@@ -15,6 +15,7 @@ import DevicesApi from "@/services/devices";
 import axios from "axios";
 import RecentSecurityEvents from "./components/RecentSecurityEvents";
 import NetWorkApi from "@/services/networks";
+import QuickWinsApi from "@/services/quickWins";
 
 interface DataType {
   key: string;
@@ -135,6 +136,14 @@ export default function DashboardPage() {
     }
   };
 
+  const getRencentEvents = async () => {
+    const res = await QuickWinsApi.DASHBOARD_INVESTIGATE_LOG({
+      page_index: 1,
+      page_size: 10,
+    });
+    debugger;
+  };
+
   const getLockThroughout = async () => {
     const res = await NetWorkApi.FETCH_LOCK_THROUGHPUT();
     debugger;
@@ -159,10 +168,11 @@ export default function DashboardPage() {
 
   useEffect(() => {
     doAThing();
-    getAllAlerts();
+    // getAllAlerts();
     getAlertCount();
     getAllDevices();
     getLockThroughout();
+    getRencentEvents();
     getTopTalkerDevices();
   }, []);
 
@@ -210,10 +220,10 @@ export default function DashboardPage() {
         <Card title="Network at a Glance " style={{ width: "49%", marginBottom: 32 }}>
           <Row gutter={16}>
             <Col span={12}>
-              <Statistic title="Known Devices" value={3} formatter={formatter as Formatter} />
+              <Statistic title="Known Devices" value={deviceTableData?.length || 0} formatter={formatter as Formatter} />
             </Col>
             <Col span={12}>
-              <Statistic title="Known Locks" value={2} precision={2} formatter={formatter as Formatter} />
+              <Statistic title="Known Locks" value={deviceTableData?.length || 0} precision={2} formatter={formatter as Formatter} />
             </Col>
           </Row>
         </Card>
