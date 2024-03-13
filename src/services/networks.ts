@@ -41,7 +41,7 @@ export function FETCH_NUM_DEVICES() {
 }
 
 // 获取网络上排名前十的通话设备。 V2
-export function FETCH_TOP_TALKER_DEVICES() {
+export function FETCH_TOP_TALKER_DEVICES(): Promise<API.ITopTalkerDevivce[]> {
   return GET(`/Networks/top-talker-devices`);
 }
 

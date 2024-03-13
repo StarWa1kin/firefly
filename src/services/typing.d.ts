@@ -39,6 +39,11 @@ declare namespace API {
     ports: Object<any> | null;
   }
 
+  interface ITopTalkerDevivce {
+    mac: string;
+    len: number;
+  }
+
   interface IFireflys {
     property1: string;
     property2: string;

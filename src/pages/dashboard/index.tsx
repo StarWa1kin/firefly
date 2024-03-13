@@ -25,11 +25,42 @@ interface DataType {
   group: string;
 }
 
+const mockDeviceData: DataType[] = [
+  {
+    key: "1",
+    ff_id: "Magic Device",
+    ip: "192.178.1.1",
+    mac: "DE:AD:BE:EF:00",
+    tag: "demo",
+    group: "Main Hub",
+  },
+  {
+    key: "2",
+    ff_id: "Smart Fridge",
+    ip: "192.178.201.3",
+    mac: "DE:AD:BE:EF:01",
+    tag: "demo",
+    group: "Kitchen",
+  },
+  {
+    key: "3",
+    ff_id: "Toaster",
+    ip: "192.168.201.2",
+    mac: "DE:AD:BE:EF:02",
+    tag: "demo",
+    group: "Kitchen",
+  },
+];
+
 export default function DashboardPage() {
   const navigate = useNavigate();
   const [form] = Form.useForm();
 
   const [priorityCountChartData, setPriorityCountChartData] = useState<any[]>([]);
+
+  const [deviceTableData, setDeviceTableData] = useState<DataType[]>();
+
+  const [topTalkersChartData, setTopTalkersChartData] = useState<any>({});
 
   const columns: TableProps<DataType>["columns"] = [
     {
@@ -74,41 +105,7 @@ export default function DashboardPage() {
     },
   ];
 
-  const data: DataType[] = [
-    {
-      key: "1",
-      ff_id: "Magic Device",
-      ip: "192.178.1.1",
-      mac: "DE:AD:BE:EF:00",
-      tag: "demo",
-      group: "Main Hub",
-    },
-    {
-      key: "2",
-      ff_id: "Smart Fridge",
-      ip: "192.178.201.3",
-      mac: "DE:AD:BE:EF:01",
-      tag: "demo",
-      group: "Kitchen",
-    },
-    {
-      key: "3",
-      ff_id: "Toaster",
-      ip: "192.168.201.2",
-      mac: "DE:AD:BE:EF:02",
-      tag: "demo",
-      group: "Kitchen",
-    },
-  ];
-
   const formatter = (value: number) => <CountUp end={value} separator="," />;
-
-  const getAllAlerts = async () => {
-    const res = await AlertApi.FETCH_ALL_ALERTS();
-    console.log(res, "getAllAlerts");
-    // const bes = await axios.get("http://localhost:5263/api/Alerts/fetch-alerts-alls");
-    // console.log(bes);
-  };
 
   const doAThing = async () => {
     // DashboardAddNewTTLDataSource();
@@ -117,28 +114,48 @@ export default function DashboardPage() {
   const getAllDevices = async () => {
     const res = await DevicesApi.FETCH_ALL_DEVICES();
     console.log(res, "getAllDevices");
+    if (res.length) {
+      setDeviceTableData(res as DataType[]);
+    }
   };
 
   const getAlertCount = async () => {
     const res = await AlertApi.FETCH_ALERTS_COUNT();
-    console.log("Security Events by Priority", res);
+    console.log(res, "Security Events by Priority");
     if (res.length) {
       const data = res.map((item) => ({ name: item.priorty, value: item.count }));
       setPriorityCountChartData(data);
     }
   };
 
+  const getAllAlerts = async () => {
+    const res = await AlertApi.FETCH_ALL_ALERTS();
+    console.log(res, "getAllAlerts");
+    if (res.length) {
+    }
+  };
+
   const getLockThroughout = async () => {
     const res = await NetWorkApi.FETCH_LOCK_THROUGHPUT();
+    debugger;
     console.log(res, "getLockThroughout");
   };
 
   const getTopTalkerDevices = async () => {
     const res = await NetWorkApi.FETCH_TOP_TALKER_DEVICES();
     console.log(res, "getTopTalkerDevices");
+    if (res.length) {
+      const xAxis = res.map((item) => item.mac);
+      const yAxis = res.map((item) => item.len);
+      const data = { xAxis, yAxis };
+      setTopTalkersChartData(data);
+    }
   };
 
-  const onSearch = () => {};
+  const onSearch = () => {
+    const queryData = form.getFieldsValue();
+    console.log(queryData, "query");
+  };
 
   useEffect(() => {
     doAThing();
@@ -153,13 +170,13 @@ export default function DashboardPage() {
     <div>
       <div className="search-bar">
         <Form layout="inline" form={form}>
-          <Form.Item label="IP">
+          <Form.Item label="IP" name="ip">
             <Input placeholder="IP address" />
           </Form.Item>
-          <Form.Item label="PORT">
+          <Form.Item label="PORT" name="port">
             <Input placeholder="port" />
           </Form.Item>
-          <Form.Item>
+          <Form.Item name="date">
             <DatePicker />
           </Form.Item>
           <Form.Item>
@@ -182,7 +199,7 @@ export default function DashboardPage() {
 
         <Card title="Top Talker Devices (in Kbps)" style={{ width: "49%", marginBottom: 32 }}>
           <div className="h-[400px]">
-            <TopTalkers></TopTalkers>
+            <TopTalkers chartData={topTalkersChartData}></TopTalkers>
           </div>
         </Card>
 
@@ -202,7 +219,7 @@ export default function DashboardPage() {
         </Card>
 
         <Card title="All Known Devices" style={{ width: "49%", marginBottom: 32 }}>
-          <Table columns={columns} dataSource={data} />
+          <Table columns={columns} dataSource={deviceTableData} pagination={false} />
         </Card>
       </div>
     </div>
