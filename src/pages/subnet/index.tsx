@@ -16,6 +16,8 @@ interface DataType {
 export default function SubnetPage() {
   const navigate = useNavigate();
 
+  const [topologyData, setTopologyData] = useState<any>();
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [deviceName, setDeviceName] = useState("");
 
@@ -46,9 +48,9 @@ export default function SubnetPage() {
       render: (_, { tag }) => <Tag color="blue">{tag}</Tag>,
     },
     {
-      title: "dgroup",
-      key: "dgroup",
-      dataIndex: "dgroup",
+      title: "group",
+      key: "group",
+      dataIndex: "group",
       align: "center",
     },
     {
@@ -75,7 +77,10 @@ export default function SubnetPage() {
 
   const getTopology = async () => {
     const res = await NetWorkApi.FETCH_TOPOLOGY();
-    debugger;
+    console.log(res, "getTopology");
+    Object.entries(res.hubs).map(([key, val]) => {
+      const { devices, ...rest } = val as any;
+    });
   };
 
   const handleOk = () => {

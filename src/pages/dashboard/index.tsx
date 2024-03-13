@@ -87,13 +87,20 @@ export default function DashboardPage() {
       key: "tag",
       dataIndex: "tag",
       align: "center",
-      render: (_, { tag }: any) => <Tag color="blue">{tag}</Tag>,
+      render: (_, { tag }: any) => {
+        if (!tag) return "-";
+        return <Tag color="blue">{tag}</Tag>;
+      },
     },
     {
       title: "group",
       key: "group",
       dataIndex: "group",
       align: "center",
+      render: (_, { group }: any) => {
+        if (!group) return "-";
+        return <Tag color="blue">{group}</Tag>;
+      },
     },
     {
       title: "Action",

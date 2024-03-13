@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Form, Input, InputNumber, Popconfirm, Select, Switch, Table, TableColumnType, Tag, Typography } from "antd";
 import DevicesApi from "@/services/devices";
+import { UPDATE_TAG } from "@/services/management";
 
 interface Item {
   key: string;
@@ -10,16 +11,6 @@ interface Item {
   status: boolean;
 }
 
-const originData: Item[] = [];
-for (let i = 0; i < 10; i++) {
-  originData.push({
-    key: i.toString(),
-    name: `Lock-${i}`,
-    associated: 1,
-    address: `192.168.${i}.1/24`,
-    status: true,
-  });
-}
 interface EditableCellProps extends React.HTMLAttributes<HTMLElement> {
   editing: boolean;
   dataIndex: string;
@@ -40,7 +31,6 @@ const EditableCell: React.FC<EditableCellProps> = ({ editing, dataIndex, title, 
   };
 
   const inputNode = compMap[inputType as keyof typeof compMap];
-  console.log(dataIndex);
   return (
     <td {...restProps}>
       {editing ? (
@@ -65,8 +55,9 @@ const EditableCell: React.FC<EditableCellProps> = ({ editing, dataIndex, title, 
 
 const ConfigPage: React.FC = () => {
   const [form] = Form.useForm();
-  const [data, setData] = useState(originData);
   const [editingKey, setEditingKey] = useState("");
+
+  const [devicesTableData, setDevicesTableData] = useState<any[]>([]);
 
   const isEditing = (record: Item) => record.key === editingKey;
 
@@ -83,7 +74,7 @@ const ConfigPage: React.FC = () => {
     try {
       const row = (await form.validateFields()) as Item;
 
-      const newData = [...data];
+      const newData = [...devicesTableData];
       const index = newData.findIndex((item) => key === item.key);
       if (index > -1) {
         const item = newData[index];
@@ -91,11 +82,11 @@ const ConfigPage: React.FC = () => {
           ...item,
           ...row,
         });
-        setData(newData);
+        setDevicesTableData(newData);
         setEditingKey("");
       } else {
         newData.push(row);
-        setData(newData);
+        setDevicesTableData(newData);
         setEditingKey("");
       }
     } catch (errInfo) {
@@ -106,12 +97,12 @@ const ConfigPage: React.FC = () => {
   const columns = [
     {
       title: "Firefly Name",
-      dataIndex: "name",
+      dataIndex: "tag",
       editable: true,
     },
     {
       title: "IP Address",
-      dataIndex: "address",
+      dataIndex: "ip",
       editable: true,
     },
     {
@@ -176,10 +167,20 @@ const ConfigPage: React.FC = () => {
   // 查询所有设备
   const getAllDevices = async () => {
     const res = await DevicesApi.FETCH_ALL_DEVICES();
+    console.log(res, "getAllDevices");
+    if (res.length) {
+      setDevicesTableData(res);
+    }
+  };
+  // 更新设备tag
+  const updateTag = async () => {
+    const res = await UPDATE_TAG({ mac: "192.168.2.4", tag: "writeby2u" });
+    debugger;
   };
 
   useEffect(() => {
     getAllDevices();
+    updateTag();
   }, []);
 
   return (
@@ -190,7 +191,7 @@ const ConfigPage: React.FC = () => {
             cell: EditableCell,
           },
         }}
-        dataSource={data}
+        dataSource={devicesTableData}
         columns={mergedColumns}
         rowClassName="editable-row"
         pagination={{
