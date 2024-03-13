@@ -13,7 +13,7 @@ const getdata = function getData() {
   };
   for (let i = 1; i <= 10; i++) {
     let obj = {
-      name: "device" + i,
+      name: "deviceMock" + i,
       value: i,
       children: [],
     };
@@ -42,7 +42,6 @@ const getdata = function getData() {
   arr.push(data);
   //
   arr = handle(arr, 0);
-  console.log(arr);
   return arr;
 };
 const handle = function handleData(data: any, index: any, color = "#00f6ff") {
@@ -93,67 +92,67 @@ const handle = function handleData(data: any, index: any, color = "#00f6ff") {
   });
 };
 
-const option: EChartsOption = {
-  type: "tree",
-  toolbox: {
-    //工具栏
-    show: false,
-    iconStyle: {
-      borderColor: "#03ceda",
-    },
-    feature: {
-      restore: {},
-    },
-  },
-  tooltip: {
-    //提示框
-    trigger: "item",
-    triggerOn: "mousemove",
-    backgroundColor: "rgba(1,70,86,1)",
-    borderColor: "rgba(0,246,255,1)",
-    borderWidth: 0.5,
-    textStyle: {
-      fontSize: 10,
-    },
-  },
-  series: [
-    {
-      type: "tree",
-      hoverAnimation: true, //hover样式
-      data: getdata(),
-      top: 0,
-      bottom: 0,
-      left: 0,
-      right: 0,
-      layout: "radial",
-      symbol: "circle",
-      symbolSize: 10,
-      nodePadding: 20,
-      animationDurationUpdate: 750,
-      expandAndCollapse: true, //子树折叠和展开的交互，默认打开
-      initialTreeDepth: 1,
-      roam: true, //是否开启鼠标缩放和平移漫游。scale/move/true
-      focusNodeAdjacency: true,
-      itemStyle: {
-        borderWidth: 1,
+export default function Topology(props: any) {
+  const data = props.chartData || getdata();
+  const option: EChartsOption = {
+    type: "tree",
+    toolbox: {
+      //工具栏
+      show: false,
+      iconStyle: {
+        borderColor: "#03ceda",
       },
-      label: {
-        //标签样式
-        color: "#fff",
+      feature: {
+        restore: {},
+      },
+    },
+    tooltip: {
+      //提示框
+      trigger: "item",
+      triggerOn: "mousemove",
+      backgroundColor: "rgba(1,70,86,1)",
+      borderColor: "rgba(0,246,255,1)",
+      borderWidth: 0.5,
+      textStyle: {
         fontSize: 10,
-        fontFamily: "SourceHanSansCN",
-        position: "inside",
-        rotate: 0,
-      },
-      lineStyle: {
-        width: 1,
-        curveness: 0.1,
       },
     },
-  ],
-};
-
-export default function Topology() {
+    series: [
+      {
+        type: "tree",
+        hoverAnimation: true, //hover样式
+        data: data,
+        top: 0,
+        bottom: 0,
+        left: 0,
+        right: 0,
+        layout: "radial",
+        symbol: "circle",
+        symbolSize: 10,
+        nodePadding: 20,
+        animationDurationUpdate: 750,
+        expandAndCollapse: true, //子树折叠和展开的交互，默认打开
+        initialTreeDepth: 1,
+        roam: true, //是否开启鼠标缩放和平移漫游。scale/move/true
+        focusNodeAdjacency: true,
+        itemStyle: {
+          borderWidth: 1,
+        },
+        label: {
+          //标签样式
+          color: "#fff",
+          fontSize: 10,
+          fontFamily: "SourceHanSansCN",
+          position: "inside",
+          rotate: 0,
+        },
+        lineStyle: {
+          width: 1,
+          curveness: 0.1,
+        },
+      },
+    ],
+  };
   const { domRef, renderChart } = useEChart({
     chartData: option,
   });

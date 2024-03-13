@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Form, Input, InputNumber, Popconfirm, Select, Switch, Table, TableColumnType, Tag, Typography } from "antd";
 import DevicesApi from "@/services/devices";
-import { UPDATE_TAG } from "@/services/management";
+import { FETCH_GROUPS, FETCH_NETWORK_STATUS, UPDATE_TAG } from "@/services/management";
 
 interface Item {
   key: string;
@@ -177,10 +177,22 @@ const ConfigPage: React.FC = () => {
     const res = await UPDATE_TAG({ mac: "192.168.2.4", tag: "writeby2u" });
     debugger;
   };
+  // 参照所有
+  const fetchGroup = async () => {
+    const res = await FETCH_GROUPS();
+    console.log(res, "fetchGroup");
+  };
+
+  const fetchNetworkStatus = async () => {
+    const res = await FETCH_NETWORK_STATUS();
+    console.log(res, "fetchNetworkStatus");
+  };
 
   useEffect(() => {
     getAllDevices();
     updateTag();
+    fetchGroup();
+    fetchNetworkStatus();
   }, []);
 
   return (

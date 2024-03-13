@@ -46,15 +46,25 @@ export function UPDATE_PROTOCOL_TAG(params: IUpdateProtocolTag) {
 
 // 获取与特定端口关联的标签
 export function FETCH_TAG_BY_PORT(port: string) {
-  return POST(`/Management/tag/${port}`);
+  return GET(`/Management/tag/${port}`);
 }
 
 // 获取不同端口关联的所有标签
 export function FETCH_ALL_TAGS() {
-  return POST(`/Management/tags`);
+  return GET(`/Management/tags`);
 }
 
-// TOTAL 8
+// 获取不同端口关联的所有标签 V5
+export function FETCH_NETWORK_STATUS() {
+  return GET(`/Management/network-status`);
+}
+
+// 获取有关所有萤火虫设备的详细信息。 V5
+export function FETCH_FIREFLY_INFO_ALL() {
+  return GET(`/api/Management/firefly-info-all`);
+}
+
+// TOTAL 8+2
 const ManagementApi = {
   UPDATE_DEVICE_GROUP,
   FETCH_GROUPS,
@@ -64,6 +74,8 @@ const ManagementApi = {
   UPDATE_PROTOCOL_TAG,
   FETCH_TAG_BY_PORT,
   FETCH_ALL_TAGS,
+  FETCH_NETWORK_STATUS,
+  FETCH_FIREFLY_INFO_ALL,
 };
 
 export default ManagementApi;

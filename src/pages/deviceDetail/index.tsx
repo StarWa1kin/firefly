@@ -1,9 +1,10 @@
 import useEchart from "@/hooks/useEchart";
 import { Card, Space, Table, TableProps, Segmented, Button, Modal, Input } from "antd";
 import Topology from "./components/Topology";
-import { useNavigate } from "umi";
-import { useState } from "react";
+import { useNavigate, useSearchParams } from "umi";
+import { useEffect, useState } from "react";
 import Line from "./components/Line";
+import { FETCH_FIREFLY_BY_ID } from "@/services/firefly";
 
 interface DataType {
   key: string;
@@ -15,11 +16,14 @@ interface DataType {
 }
 export default function DevicesPage() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
 
   const [activeTab, setActiveTab] = useState("list");
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [deviceName, setDeviceName] = useState("");
+
+  const [topologyData, setTopologyData] = useState<any>();
 
   const columns: TableProps<DataType>["columns"] = [
     {
@@ -64,11 +68,23 @@ export default function DevicesPage() {
     setDeviceName("");
   };
 
+  const getAssociatedDevices = async () => {
+    const id = searchParams.get("ff_id");
+    if (!id) return;
+    const res = await FETCH_FIREFLY_BY_ID({ id });
+    console.log(res, "getAssociatedDevices");
+    setTopologyData(res);
+  };
+
+  useEffect(() => {
+    getAssociatedDevices();
+  }, []);
+
   return (
     <div className="flex ">
       <Card title="Connected Devices" style={{ width: "50%", marginRight: 16 }} extra={<Button onClick={() => setIsModalOpen(true)}>Edit Device Name</Button>}>
         <div className="h-[600px]">
-          <Topology></Topology>
+          <Topology chartData={topologyData}></Topology>
 
           <p>last seen: now!</p>
         </div>
